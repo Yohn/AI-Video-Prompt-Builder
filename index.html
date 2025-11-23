@@ -17,6 +17,46 @@
             </div>
         </div>
 
+        <!-- Prompt Analyzer Section -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">📝 Prompt Analyzer</h5>
+                        <button id="clearAnalyzerBtn" class="btn btn-sm btn-outline-secondary" style="display: none;">
+                            Clear
+                        </button>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-lg-6 mb-3">
+                                <label for="promptInput" class="form-label">Paste your prompt here:</label>
+                                <textarea
+                                    id="promptInput"
+                                    class="form-control"
+                                    rows="8"
+                                    placeholder="Example: Dynamic fire dancer in mid-spin, twirling fire poi with intense motion blur, glowing trails forming fractals..."></textarea>
+                                <div class="mt-2">
+                                    <button id="analyzeBtn" class="btn btn-primary">
+                                        Analyze & Categorize
+                                    </button>
+                                    <button id="addToLibraryBtn" class="btn btn-success ms-2" style="display: none;">
+                                        Add Categories to Library
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="col-lg-6">
+                                <label class="form-label">Categorized Results:</label>
+                                <div id="categorizedResults" class="border rounded p-3" style="min-height: 250px; max-height: 400px; overflow-y: auto;">
+                                    <p class="text-muted text-center mt-5">Paste a prompt and click "Analyze & Categorize" to see results</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <div class="row">
             <!-- Prompt Types Selection -->
             <div class="col-lg-3 col-md-4 mb-4">
@@ -75,6 +115,7 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="categorizer.js"></script>
     <script src="app.js"></script>
 </body>
 </html>
