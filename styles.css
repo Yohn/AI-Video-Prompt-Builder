@@ -1,18 +1,7 @@
-/* Custom styles for AI Video Prompt Builder */
+/* Minimal styles for AI Video Prompt Builder - Using Bootstrap's default dark theme */
 
 body {
-    background-color: #0d1117;
     min-height: 100vh;
-}
-
-.card {
-    background-color: #161b22;
-    border-color: #30363d;
-}
-
-.card-header {
-    background-color: #1c2128;
-    border-bottom-color: #30363d;
 }
 
 .form-check {
@@ -24,10 +13,14 @@ body {
     user-select: none;
 }
 
+.form-check-input {
+    cursor: pointer;
+}
+
 .phrase-group {
     margin-bottom: 1.5rem;
     padding-bottom: 1rem;
-    border-bottom: 1px solid #30363d;
+    border-bottom: 1px solid var(--bs-border-color);
 }
 
 .phrase-group:last-child {
@@ -35,42 +28,13 @@ body {
 }
 
 .phrase-group h6 {
-    color: #58a6ff;
     margin-bottom: 0.75rem;
     font-weight: 600;
 }
 
-.badge {
-    font-weight: 500;
-}
-
 #generatedPrompt {
-    background-color: #0d1117;
-    border-color: #30363d;
-    color: #c9d1d9;
     font-family: 'Consolas', 'Monaco', monospace;
     resize: vertical;
-}
-
-#generatedPrompt:focus {
-    background-color: #0d1117;
-    border-color: #58a6ff;
-    color: #c9d1d9;
-    box-shadow: 0 0 0 0.25rem rgba(88, 166, 255, 0.25);
-}
-
-.form-check-input {
-    cursor: pointer;
-}
-
-.form-check-input:checked {
-    background-color: #58a6ff;
-    border-color: #58a6ff;
-}
-
-.form-check-input:focus {
-    border-color: #58a6ff;
-    box-shadow: 0 0 0 0.25rem rgba(88, 166, 255, 0.25);
 }
 
 .sticky-top {
@@ -82,49 +46,4 @@ body {
         position: relative !important;
         top: 0 !important;
     }
-}
-
-.btn-primary {
-    background-color: #238636;
-    border-color: #238636;
-}
-
-.btn-primary:hover {
-    background-color: #2ea043;
-    border-color: #2ea043;
-}
-
-.btn-primary:disabled {
-    background-color: #238636;
-    border-color: #238636;
-    opacity: 0.5;
-}
-
-h1 {
-    color: #58a6ff;
-    font-weight: 700;
-}
-
-/* Smooth transitions */
-.form-check-input,
-.btn {
-    transition: all 0.2s ease-in-out;
-}
-
-/* Custom scrollbar for textarea */
-#generatedPrompt::-webkit-scrollbar {
-    width: 8px;
-}
-
-#generatedPrompt::-webkit-scrollbar-track {
-    background: #0d1117;
-}
-
-#generatedPrompt::-webkit-scrollbar-thumb {
-    background: #30363d;
-    border-radius: 4px;
-}
-
-#generatedPrompt::-webkit-scrollbar-thumb:hover {
-    background: #484f58;
 }
