@@ -88,32 +88,60 @@ function renderPhrases() {
 
     container.innerHTML = '';
 
-    selectedPromptTypes.forEach(promptType => {
+    selectedPromptTypes.forEach((promptType, index) => {
         const groupDiv = document.createElement('div');
-        groupDiv.className = 'phrase-group';
+        groupDiv.className = 'phrase-group mb-3';
 
-        const heading = document.createElement('h6');
-        heading.textContent = promptType;
-        groupDiv.appendChild(heading);
+        // Create unique ID for this collapse
+        const collapseId = `collapse-${promptType.replace(/\s+/g, '-')}`;
+
+        // Create collapsible header
+        const headerDiv = document.createElement('div');
+        headerDiv.className = 'mb-2';
+        headerDiv.innerHTML = `
+            <button class="btn btn-sm btn-outline-secondary w-100 text-start d-flex justify-content-between align-items-center"
+                    type="button"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#${collapseId}"
+                    aria-expanded="true"
+                    aria-controls="${collapseId}">
+                <span>${promptType}</span>
+                <span class="badge bg-primary">${promptData[promptType].length}</span>
+            </button>
+        `;
+        groupDiv.appendChild(headerDiv);
+
+        // Create collapsible content container
+        const collapseDiv = document.createElement('div');
+        collapseDiv.className = 'collapse show';
+        collapseDiv.id = collapseId;
+
+        // Create horizontal list group for phrases
+        const listGroup = document.createElement('div');
+        listGroup.className = 'list-group list-group-horizontal-md flex-wrap';
 
         const phrases = promptData[promptType];
         phrases.forEach(phrase => {
             const checkId = `phrase-${phrase.replace(/\s+/g, '-')}`;
-            const checkDiv = document.createElement('div');
-            checkDiv.className = 'form-check';
-            checkDiv.innerHTML = `
-                <input class="form-check-input phrase-checkbox"
-                       type="checkbox"
-                       value="${phrase}"
-                       id="${checkId}"
-                       ${selectedPhrases.has(phrase) ? 'checked' : ''}>
-                <label class="form-check-label" for="${checkId}">
-                    ${phrase}
-                </label>
+            const listItem = document.createElement('div');
+            listItem.className = 'list-group-item p-2';
+            listItem.innerHTML = `
+                <div class="form-check mb-0">
+                    <input class="form-check-input phrase-checkbox"
+                           type="checkbox"
+                           value="${phrase}"
+                           id="${checkId}"
+                           ${selectedPhrases.has(phrase) ? 'checked' : ''}>
+                    <label class="form-check-label" for="${checkId}">
+                        ${phrase}
+                    </label>
+                </div>
             `;
-            groupDiv.appendChild(checkDiv);
+            listGroup.appendChild(listItem);
         });
 
+        collapseDiv.appendChild(listGroup);
+        groupDiv.appendChild(collapseDiv);
         container.appendChild(groupDiv);
     });
 
