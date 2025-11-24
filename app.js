@@ -479,17 +479,25 @@ function addCategoriesToLibrary() {
     successMsg.className = 'alert alert-success mt-3';
     successMsg.innerHTML = `
         <strong>Success!</strong> Categories have been added to your library.
-        Check the "Prompt Types" section to use them.
+        The modal will close automatically.
     `;
     container.insertBefore(successMsg, container.firstChild);
 
     // Hide the add button
     document.getElementById('addToLibraryBtn').style.display = 'none';
 
-    // Scroll to the prompt types section
+    // Close the modal after a delay
     setTimeout(() => {
-        document.getElementById('promptTypesList').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-    }, 500);
+        const modal = bootstrap.Modal.getInstance(document.getElementById('analyzerModal'));
+        if (modal) {
+            modal.hide();
+        }
+
+        // Scroll to the prompt types section after modal is closed
+        setTimeout(() => {
+            document.getElementById('promptTypesList').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }, 300);
+    }, 1500);
 }
 
 // Initialize when DOM is loaded
