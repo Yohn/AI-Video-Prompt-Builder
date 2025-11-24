@@ -309,9 +309,11 @@ function displayCategorizedResults(data) {
         const phraseList = document.createElement('ul');
         phraseList.className = 'list-unstyled ms-3';
 
-        phrases.forEach(phraseObj => {
+        phrases.forEach((phraseObj, phraseIndex) => {
             const li = document.createElement('li');
-            li.className = 'mb-1';
+            li.className = 'mb-1 d-flex align-items-center';
+            li.dataset.category = category;
+            li.dataset.phraseIndex = phraseIndex;
 
             // Show confidence indicator
             const confidenceClass = phraseObj.confidence > 15 ? 'success' :
@@ -321,7 +323,13 @@ function displayCategorizedResults(data) {
                 <span class="badge bg-${confidenceClass} me-2" style="width: 40px;">
                     ${Math.round(phraseObj.confidence)}
                 </span>
-                <small>${phraseObj.phrase}</small>
+                <small class="phrase-text flex-grow-1" contenteditable="false">${phraseObj.phrase}</small>
+                <button class="btn btn-sm btn-outline-primary ms-2 edit-phrase-btn" title="Edit phrase">
+                    <small>✏️</small>
+                </button>
+                <button class="btn btn-sm btn-outline-danger ms-1 remove-phrase-btn" title="Remove phrase">
+                    <small>🗑️</small>
+                </button>
             `;
             phraseList.appendChild(li);
         });
@@ -329,6 +337,106 @@ function displayCategorizedResults(data) {
         categoryDiv.appendChild(phraseList);
         container.appendChild(categoryDiv);
     });
+
+    // Attach event listeners for edit and remove buttons
+    attachPhraseEditListeners();
+}
+
+// Attach event listeners for phrase editing and removal
+function attachPhraseEditListeners() {
+    const container = document.getElementById('categorizedResults');
+
+    // Edit button listeners
+    container.querySelectorAll('.edit-phrase-btn').forEach(btn => {
+        btn.addEventListener('click', handleEditPhrase);
+    });
+
+    // Remove button listeners
+    container.querySelectorAll('.remove-phrase-btn').forEach(btn => {
+        btn.addEventListener('click', handleRemovePhrase);
+    });
+}
+
+// Handle phrase editing
+function handleEditPhrase(e) {
+    const btn = e.currentTarget;
+    const li = btn.closest('li');
+    const phraseText = li.querySelector('.phrase-text');
+    const isEditing = phraseText.getAttribute('contenteditable') === 'true';
+
+    if (!isEditing) {
+        // Enable editing
+        phraseText.setAttribute('contenteditable', 'true');
+        phraseText.focus();
+        phraseText.style.backgroundColor = '#2a2a2a';
+        phraseText.style.padding = '2px 4px';
+        phraseText.style.borderRadius = '3px';
+        btn.innerHTML = '<small>💾</small>';
+        btn.title = 'Save changes';
+        btn.classList.remove('btn-outline-primary');
+        btn.classList.add('btn-success');
+
+        // Select all text
+        const range = document.createRange();
+        range.selectNodeContents(phraseText);
+        const selection = window.getSelection();
+        selection.removeAllRanges();
+        selection.addRange(range);
+    } else {
+        // Save changes
+        const newText = phraseText.textContent.trim();
+        if (!newText) {
+            alert('Phrase cannot be empty');
+            return;
+        }
+
+        // Update the data
+        const category = li.dataset.category;
+        const phraseIndex = parseInt(li.dataset.phraseIndex);
+
+        if (lastCategorizedData && lastCategorizedData.categories[category]) {
+            lastCategorizedData.categories[category][phraseIndex].phrase = newText;
+        }
+
+        // Update UI
+        phraseText.setAttribute('contenteditable', 'false');
+        phraseText.style.backgroundColor = '';
+        phraseText.style.padding = '';
+        phraseText.style.borderRadius = '';
+        btn.innerHTML = '<small>✏️</small>';
+        btn.title = 'Edit phrase';
+        btn.classList.remove('btn-success');
+        btn.classList.add('btn-outline-primary');
+    }
+}
+
+// Handle phrase removal
+function handleRemovePhrase(e) {
+    const btn = e.currentTarget;
+    const li = btn.closest('li');
+    const category = li.dataset.category;
+    const phraseIndex = parseInt(li.dataset.phraseIndex);
+    const phraseText = li.querySelector('.phrase-text').textContent;
+
+    if (!confirm(`Remove "${phraseText}" from ${category}?`)) {
+        return;
+    }
+
+    // Remove from data
+    if (lastCategorizedData && lastCategorizedData.categories[category]) {
+        lastCategorizedData.categories[category].splice(phraseIndex, 1);
+
+        // If category is now empty, remove it
+        if (lastCategorizedData.categories[category].length === 0) {
+            delete lastCategorizedData.categories[category];
+        }
+
+        // Update total phrase count
+        lastCategorizedData.totalPhrases--;
+    }
+
+    // Re-render the results
+    displayCategorizedResults(lastCategorizedData);
 }
 
 // Clear the analyzer
@@ -371,17 +479,25 @@ function addCategoriesToLibrary() {
     successMsg.className = 'alert alert-success mt-3';
     successMsg.innerHTML = `
         <strong>Success!</strong> Categories have been added to your library.
-        Check the "Prompt Types" section to use them.
+        The modal will close automatically.
     `;
     container.insertBefore(successMsg, container.firstChild);
 
     // Hide the add button
     document.getElementById('addToLibraryBtn').style.display = 'none';
 
-    // Scroll to the prompt types section
+    // Close the modal after a delay
     setTimeout(() => {
-        document.getElementById('promptTypesList').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-    }, 500);
+        const modal = bootstrap.Modal.getInstance(document.getElementById('analyzerModal'));
+        if (modal) {
+            modal.hide();
+        }
+
+        // Scroll to the prompt types section after modal is closed
+        setTimeout(() => {
+            document.getElementById('promptTypesList').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }, 300);
+    }, 1500);
 }
 
 // Initialize when DOM is loaded
